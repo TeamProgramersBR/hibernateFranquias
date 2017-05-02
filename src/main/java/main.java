@@ -1,9 +1,13 @@
 import java.util.Calendar;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
+import dao.AcompanhamentoDAO;
+import entity.Acompanhamento;
 import entity.Pessoa;
 
 /**
@@ -15,27 +19,30 @@ public class main
     public static void main(String [] args){
         System.out.println("OlAR");
 
-        Pessoa p= new Pessoa();
-
-        p.setNome("gerivaldo");
-        p.setCpf(222222222);
-        p.setDtnasc(Calendar.getInstance().getTime());
-        p.setEmail("roselvmna@asodk.com");
-        p.setRg(2549925);
-        p.setTelefone("552525252");
+        
 
          EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("franquia");
         EntityManager manager = entityManagerFactory.createEntityManager();
-
-
         try{
-            manager.getTransaction().begin();
-            manager.persist(p);
+       String jpql = "SELECT Acompanhamento.descricao "+
+				"from Acompanhamento "+
+				"INNER JOIN Franquia  Franquia.id = Acompanhamento.franquia_id";
+       
+        	
+        Query query = manager.createQuery(jpql);
+        List<Acompanhamento> acompanhamentos = (List<Acompanhamento>) query.getResultList();
+        for (Acompanhamento tarefa : acompanhamentos) {
+  		  System.out.println(tarefa.getDescricao());
+  		}
+        }catch(Error e){
+        	System.out.println(e);
+        }
+
+        		
+            
             manager.getTransaction().commit();
             manager.close();
-
-        }catch (Exception e){
-            System.out.println(e);
-        }
+            
+        
     }
 }
